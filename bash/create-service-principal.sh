@@ -30,6 +30,7 @@ else
   echo "  If you want to select a subscription from a different account, before running this script you should either log out from all the Azure accounts or login manually with the new account."
   echo "  az login"
   echo ""
+  exit 1
 fi
 
 if [ -z "$SUBSCRIPTION_ID" ]
@@ -121,11 +122,11 @@ else
     if [ $? -ne 0 ]
     then
       exit 1
+    fi
+  else
       echo " "
       echo "  We've encounter an unexpected error; please hit Ctr-C and retry from the beginning"
       read my_error
-    fi
-    
   fi
 fi
 
