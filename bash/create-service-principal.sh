@@ -22,7 +22,7 @@ my_app_id_URI="${MY_APP_NAME}_id"
 #subscriptions_list=$(azure account list --json)
 subscriptions_list=$(az account list)
 subscriptions_list_count=$(echo $subscriptions_list | jq '. | length' 2>/dev/null)
-if [ $? -ne 0 ] || [ "$subscriptions_list_count" -eq "0" ]
+if [[ $? -ne 0 ]] || [[ "$subscriptions_list_count" -eq "0" ]]
 then
   az login
 else
@@ -30,20 +30,19 @@ else
   echo "  If you want to select a subscription from a different account, before running this script you should either log out from all the Azure accounts or login manually with the new account."
   echo "  az login"
   echo ""
-  exit 1
 fi
 
-if [ -z "$SUBSCRIPTION_ID" ]
+if [[ -z "$SUBSCRIPTION_ID" ]]
 then
   #prompt for subscription
   subscription_index=0
   subscriptions_list=$(az account list)
   subscriptions_list_count=$(echo $subscriptions_list | jq '. | length')
-  if [ $subscriptions_list_count -eq 0 ]
+  if [[ $subscriptions_list_count -eq 0 ]]
   then
     echo "  You need to sign up an Azure Subscription here: https://azure.microsoft.com"
     exit 1
-  elif [ $subscriptions_list_count -gt 1 ]
+  elif [[ $subscriptions_list_count -gt 1 ]]
   then
     echo $subscriptions_list | jq -r 'keys[] as $i | "  \($i+1). \(.[$i] | .name)"'
 
@@ -67,7 +66,7 @@ then
 fi
 
 az account set --subscription $SUBSCRIPTION_ID >/dev/null
-if [ $? -ne 0 ]
+if [[ $? -ne 0 ]]
 then
   exit 1
 else
@@ -86,14 +85,14 @@ MY_TENANT_ID=$(az account show | jq -r '.tenantId')
 #my_error_check=$(azure ad sp show --search $MY_APP_NAME --json | grep "displayName" | grep -c \"$MY_APP_NAME\" )
 my_error_check=$(az ad sp list --display-name $MY_APP_NAME | grep "displayName" | grep -c \"$MY_APP_NAME\" )
 
-if [ $my_error_check -gt 0 ];
+if [[ $my_error_check -gt 0 ]]
 then
   echo "  Found an app id matching the one we are trying to create; we will reuse that instead"
 else
   echo "  Creating application in active directory:"
   echo "  az ad app create --display-name $MY_APP_NAME --homepage http://$MY_APP_NAME --identifier-uris http://$my_app_id_URI/ --password $MY_APP_KEY"
   az ad app create --display-name $MY_APP_NAME --homepage http://$MY_APP_NAME --identifier-uris http://$my_app_id_URI/ --password $MY_APP_KEY
-  if [ $? -ne 0 ]
+  if [[ $? -ne 0 ]]
   then
     exit 1
   fi
@@ -102,7 +101,7 @@ else
   sleep 20
   my_error_check_compelete=$(az ad app list --display-name $MY_APP_NAME | grep "displayName" | grep -c \"$MY_APP_NAME\" )
 
-  if [ $my_error_check_compelete -gt 0 ];
+  if [[ $my_error_check_compelete -gt 0 ]]
   then
     my_app_object_id=$(az ad app list --display-name $MY_APP_NAME | jq -r '.[].objectId')
     MY_CLIENT_ID=$(az ad app list --display-name $MY_APP_NAME | jq -r '.[].appId')
@@ -119,7 +118,7 @@ else
     echo "  Assign rights to service principle"
     echo " az role assignment create --assignee $my_app_sp_app_id --role Owner"
     az role assignment create --assignee $my_app_sp_app_id --role Owner > /dev/null
-    if [ $? -ne 0 ]
+    if [[ $? -ne 0 ]]
     then
       exit 1
     fi

@@ -6,7 +6,7 @@ Utilities of Azure Devops to run/configure systems in Azure
 
 Creates Azure Service Principal credentials.
 
-Requires that the [Azure CLI](https://docs.microsoft.com/en-us/azure/xplat-cli-install) is pre-installed.
+Requires that the [Azure CLI](https://github.com/Azure/azure-cli) is pre-installed.
 
 The script prompts for user input to be able to authenticate on Azure and to pick the desired subscription (this step can be skipped by providing the subscription id as a script argument).
 
